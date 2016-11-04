@@ -16,11 +16,15 @@ CONFIG_FILENAME = os.path.join(
 config = json.loads(open(CONFIG_FILENAME).read())
 list_name = sys.argv[1]
 
-boarddata = requests.get(TRELLO_BOARD_URL.format(
-    boardid=config['board_id'],
-    key=config['api_key'],
-    token=config['app_token'],
-)).json()
+try:
+    boarddata = requests.get(TRELLO_BOARD_URL.format(
+        boardid=config['board_id'],
+        key=config['api_key'],
+        token=config['app_token'],
+    )).json()
+except requests.exceptions.ConnectionError:
+    print('<conn-error>')
+    sys.exit(1)
 
 for l in boarddata['lists']:
     if list_name == l['name']:
